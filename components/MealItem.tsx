@@ -13,6 +13,8 @@ import { MaterialIcons } from '@expo/vector-icons'
 import Meal from '../models/Meal'
 import Card from './UI/Card'
 import Colors from '../assets/colors'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { FavoritesAction } from '../reducers/favorites'
 
 type MealItemProps = Meal & {
   style?: StyleProp<ViewStyle>
@@ -20,7 +22,12 @@ type MealItemProps = Meal & {
 }
 
 const MealItem: FC<MealItemProps> = props => {
-  const favoritePressHandler = () => {}
+  const favorites = useAppSelector(state => state.favorites)
+  const dispatch = useAppDispatch()
+  const isFavorite = favorites.ids.includes(props.id)
+  const favoritePressHandler = () => {
+    dispatch(FavoritesAction.toggleFavorite(props.id))
+  }
   return (
     <TouchableNativeFeedback onPress={() => props.onPress(props.id)}>
       <View style={[styles.screen, props.style]}>
@@ -72,7 +79,7 @@ const MealItem: FC<MealItemProps> = props => {
                 onPress={favoritePressHandler}>
                 <View style={styles.favoriteButton}>
                   <MaterialIcons
-                    name="favorite-outline"
+                    name={isFavorite ? 'favorite' : 'favorite-outline'}
                     size={26}
                     color="white"
                   />

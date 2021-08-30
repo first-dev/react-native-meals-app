@@ -5,12 +5,14 @@ import { NavigationDrawerScreenComponent } from 'react-navigation-drawer'
 import { MEALS } from '../assets/dummy-data'
 import MealsList from '../components/MealsList'
 import MenuHeaderButton from '../components/MenuHeaderButton'
+import { useAppSelector } from '../hooks/redux'
 
 type FavoritesScreenParams = {}
 
 const FavoritesScreen: NavigationDrawerScreenComponent<FavoritesScreenParams> =
   ({ navigation }) => {
-    const meals = MEALS.filter(meal => meal.duration < 60)
+    const favorites = useAppSelector(state => state.favorites)
+    const meals = MEALS.filter(meal => favorites.ids.includes(meal.id))
     return (
       <View style={styles.screen}>
         <MealsList meals={meals} navigation={navigation as any} />

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useCallback, useEffect } from 'react'
 import { View, StyleSheet, Text, ImageBackground } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
@@ -10,14 +10,26 @@ import { MEALS, CATEGORIES } from '../assets/dummy-data'
 import Colors from '../assets/colors'
 import HeaderButton from '../components/UI/HeaderButton'
 import WaveDivider from '../components/UI/WaveDivider'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { FavoritesAction } from '../reducers/favorites'
 
-type MealDetailsParams = { mealId: string }
+type MealDetailsParams = {
+  mealId: string
+  favoritePressHandler: () => void
+  isFavorite: boolean
+}
 
 const MealDetails: NavigationStackScreenComponent<MealDetailsParams> = ({
   navigation,
 }) => {
   const mealId = navigation.getParam('mealId')
   const meal = MEALS.find(meal => meal.id === mealId)
+  const favorites = useAppSelector(state => state.favorites)
+  const dispatch = useAppDispatch()
+  const isFavorite = favorites.ids.includes(mealId)
+  const favoritePressHandler = useCallback(() => {
+    dispatch(FavoritesAction.toggleFavorite(mealId))
+  }, [mealId])
   const categories = CATEGORIES.filter(category =>
     meal?.categoryIds.includes(category.id)
   )
@@ -53,6 +65,14 @@ const MealDetails: NavigationStackScreenComponent<MealDetailsParams> = ({
         break
     }
   }
+
+  useEffect(() => {
+    navigation.setParams({ favoritePressHandler })
+  }, [favoritePressHandler])
+  useEffect(() => {
+    navigation.setParams({ isFavorite })
+  }, [isFavorite])
+
   return (
     <View style={styles.screen}>
       <ScrollView>
@@ -257,17 +277,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 })
-MealDetails.navigationOptions = navigationData => {
-  const mealId = navigationData.navigation.getParam('mealId')
+MealDetails.navigationOptions = ({ navigation }) => {
+  const mealId = navigation.getParam('mealId')
   const meal = MEALS.find(meal => meal.id === mealId)
+  const isFavorite = navigation.getParam('isFavorite')
+  const favoritePressHandler = navigation.getParam('favoritePressHandler')
   return {
     title: meal?.title,
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
           title="Favorite"
-          iconName="favorite-outline"
-          onPress={() => console.log('favorite pressed')}
+          iconName={isFavorite ? 'favorite' : 'favorite-outline'}
+          onPress={favoritePressHandler}
         />
       </HeaderButtons>
     ),
