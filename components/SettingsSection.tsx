@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native'
+import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 import { Card, Title } from 'react-native-paper'
 
 type SettingsSectionProps = View['props'] & {

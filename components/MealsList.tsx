@@ -11,7 +11,6 @@ type MealsListProps = {
 }
 
 const MealsList: FC<MealsListProps> = ({ meals, navigation }) => {
-  const categoryId = navigation.getParam('categoryId')
   const window = useDynamicDimensions('window')
   const numColumns = window.width > 360 ? Math.floor(window.width / 360) : 1
   const pressHandler = (mealId: string) => {
