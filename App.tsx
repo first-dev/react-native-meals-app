@@ -4,8 +4,10 @@ import AppLoading from 'expo-app-loading'
 import { useState } from 'react'
 import { enableScreens } from 'react-native-screens'
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper'
+import { Provider as ReduxProvider } from 'react-redux'
 import { MaterialIcons } from '@expo/vector-icons'
 
+import store from './store/index'
 import MealsNavigator from './navigation/MealsNavigator'
 import Colors from './assets/colors'
 
@@ -43,7 +45,9 @@ export default function App() {
       settings={{
         icon: props => <MaterialIcons {...props} name={props.name as any} />,
       }}>
-      <MealsNavigator />
+      <ReduxProvider store={store}>
+        <MealsNavigator />
+      </ReduxProvider>
     </PaperProvider>
   )
 }
