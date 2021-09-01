@@ -4,7 +4,7 @@ import { DrawerContentComponentProps } from 'react-navigation-drawer/lib/typescr
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView } from 'react-native-gesture-handler'
 
-import DrawerItem from '../components/modified-paper/DrawerItem'
+import DrawerItem from './modified-paper/DrawerItem'
 
 const getIcon = (key: string) => {
   switch (key) {
