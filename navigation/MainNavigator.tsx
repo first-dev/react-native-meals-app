@@ -1,20 +1,25 @@
-import { createAppContainer } from 'react-navigation'
-import { createDrawerNavigator } from 'react-navigation-drawer'
+import React from 'react'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 
-import contentOptions from './contentOptions'
-import CustomDrawerContentComponent from '../components/CustomDrawerContentComponent'
+import colors from '../assets/colors'
 import BottomTabNavigator from './BottomTabNavigator'
-import SettingsStackNavigator from './SettingsStackNavigator'
+import SettingsScreen from '../screens/SettingsScreen'
+import DrawerContent from '../components/DrawerContent'
 
-const DrawerNavigator = createDrawerNavigator(
-  {
-    Meals: BottomTabNavigator,
-    Settings: SettingsStackNavigator,
-  },
-  {
-    contentOptions,
-    contentComponent: CustomDrawerContentComponent,
-  }
+const Drawer = createDrawerNavigator()
+
+export default () => (
+  <Drawer.Navigator
+    initialRouteName="Meals"
+    drawerContent={props => <DrawerContent {...props} />}
+    defaultScreenOptions={{
+      drawerActiveTintColor: colors.primary,
+    }}>
+    <Drawer.Screen
+      name="Meals"
+      component={BottomTabNavigator}
+      options={{ headerShown: false }}
+    />
+    <Drawer.Screen name="Settings" component={SettingsScreen} />
+  </Drawer.Navigator>
 )
-
-export default createAppContainer(DrawerNavigator)

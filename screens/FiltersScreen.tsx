@@ -1,32 +1,25 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { NavigationDrawerScreenComponent } from 'react-navigation-drawer'
+import { DrawerScreenProps } from '@react-navigation/drawer'
+import React, { FC } from 'react'
+import { View, StyleSheet } from 'react-native'
 
 import { MEALS } from '../assets/dummy-data'
 import MealsList from '../components/MealsList'
+import { MealsStackParamList } from '../navigation/MealsStackNavigator'
 
-type FiltersScreenParams = {
-  categoryIds?: string[]
-  affordability?: string
-  complexity?: string
-  duration?: number
-  isGlutenFree?: boolean
-  isVegan?: boolean
-  isVegetarian?: boolean
-  isLactoseFree?: boolean
-}
+type Props = DrawerScreenProps<MealsStackParamList, 'Filters'>
 
-const FiltersScreen: NavigationDrawerScreenComponent<FiltersScreenParams> = ({
-  navigation,
-}) => {
-  const categoryIds = navigation.getParam('categoryIds')
-  const affordability = navigation.getParam('affordability')
-  const complexity = navigation.getParam('complexity')
-  const duration = navigation.getParam('duration')
-  const isGlutenFree = navigation.getParam('isGlutenFree')
-  const isVegan = navigation.getParam('isVegan')
-  const isVegetarian = navigation.getParam('isVegetarian')
-  const isLactoseFree = navigation.getParam('isLactoseFree')
+const FiltersScreen: FC<Props> = ({ navigation, route }) => {
+  const {
+    affordability,
+    categoryIds,
+    complexity,
+    duration,
+    isGlutenFree,
+    isLactoseFree,
+    isVegan,
+    isVegetarian,
+  } = route.params
+
   const meals = MEALS.filter(
     meal =>
       (isGlutenFree === undefined || isGlutenFree === meal.isGlutenFree) &&

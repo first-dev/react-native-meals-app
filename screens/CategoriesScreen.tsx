@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
-import { NavigationDrawerScreenComponent } from 'react-navigation-drawer'
+import { DrawerScreenProps } from '@react-navigation/drawer'
 
 import { CATEGORIES } from '../assets/dummy-data'
 import CategoryItem from '../components/CategoryItem'
 import useDynamicDimensions from '../hooks/useDynamicDimensions'
-import MenuHeaderButton from '../components/MenuHeaderButton'
+import { MealsStackParamList } from '../navigation/MealsStackNavigator'
 
-const CategoriesScreen: NavigationDrawerScreenComponent = ({ navigation }) => {
+type Props = DrawerScreenProps<MealsStackParamList, 'Categories'>
+
+const CategoriesScreen: FC<Props> = ({ navigation }) => {
   const window = useDynamicDimensions('window')
   const numColumns = window.width > 180 ? Math.floor(window.width / 180) : 1
   return (
@@ -30,12 +32,6 @@ const CategoriesScreen: NavigationDrawerScreenComponent = ({ navigation }) => {
     </View>
   )
 }
-CategoriesScreen.navigationOptions = ({ navigation }) => ({
-  title: 'Meals Categories',
-  headerLeft: () => {
-    return <MenuHeaderButton navigation={navigation} />
-  },
-})
 export default CategoriesScreen
 const styles = StyleSheet.create({
   screen: {

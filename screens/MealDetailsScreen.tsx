@@ -1,28 +1,23 @@
-import React, { Fragment, useCallback, useEffect } from 'react'
+import React, { FC, Fragment, useCallback, useLayoutEffect } from 'react'
 import { View, StyleSheet, Text, ImageBackground } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
-import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { DefaultTheme } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { ScrollView } from 'react-native-gesture-handler'
 import { Chip, Divider, Card, Title } from 'react-native-paper'
 
 import { MEALS, CATEGORIES } from '../assets/dummy-data'
 import Colors from '../assets/colors'
-import HeaderButton from '../components/UI/HeaderButton'
 import WaveDivider from '../components/UI/WaveDivider'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import { FavoritesAction } from '../reducers/favorites'
+import { MealsStackParamList } from '../navigation/MealsStackNavigator'
+import { HeaderButtons, Item } from 'react-navigation-header-buttons'
+import HeaderButton from '../components/UI/HeaderButton'
 
-type MealDetailsParams = {
-  mealId: string
-  favoritePressHandler: () => void
-  isFavorite: boolean
-}
+type Props = NativeStackScreenProps<MealsStackParamList, 'MealDetails'>
 
-const MealDetails: NavigationStackScreenComponent<MealDetailsParams> = ({
-  navigation,
-}) => {
-  const mealId = navigation.getParam('mealId')
+const MealDetails: FC<Props> = ({ navigation, route }) => {
+  const mealId = route.params.mealId
   const meal = MEALS.find(meal => meal.id === mealId)
   const favorites = useAppSelector(state => state.favorites)
   const dispatch = useAppDispatch()
@@ -30,20 +25,27 @@ const MealDetails: NavigationStackScreenComponent<MealDetailsParams> = ({
   const favoritePressHandler = useCallback(() => {
     dispatch(FavoritesAction.toggleFavorite(mealId))
   }, [mealId])
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: meal?.title,
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          <Item
+            title="Favorite"
+            iconName={isFavorite ? 'favorite' : 'favorite-outline'}
+            onPress={favoritePressHandler}
+          />
+        </HeaderButtons>
+      ),
+    })
+  }, [navigation, isFavorite, favoritePressHandler])
+
   const categories = CATEGORIES.filter(category =>
     meal?.categoryIds.includes(category.id)
   )
   const chipPressHandler = (
-    filter: {
-      categoryIds?: string[]
-      affordability?: string
-      complexity?: string
-      duration?: number
-      isGlutenFree?: boolean
-      isVegan?: boolean
-      isVegetarian?: boolean
-      isLactoseFree?: boolean
-    },
+    filter: MealsStackParamList['Filters'],
     action: 'filter' | 'category' = 'filter'
   ) => {
     switch (action) {
@@ -65,14 +67,6 @@ const MealDetails: NavigationStackScreenComponent<MealDetailsParams> = ({
         break
     }
   }
-
-  useEffect(() => {
-    navigation.setParams({ favoritePressHandler })
-  }, [favoritePressHandler])
-  useEffect(() => {
-    navigation.setParams({ isFavorite })
-  }, [isFavorite])
-
   return (
     <View style={styles.screen}>
       <ScrollView>
@@ -277,22 +271,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 })
-MealDetails.navigationOptions = ({ navigation }) => {
-  const mealId = navigation.getParam('mealId')
-  const meal = MEALS.find(meal => meal.id === mealId)
-  const isFavorite = navigation.getParam('isFavorite')
-  const favoritePressHandler = navigation.getParam('favoritePressHandler')
-  return {
-    title: meal?.title,
-    headerRight: () => (
-      <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item
-          title="Favorite"
-          iconName={isFavorite ? 'favorite' : 'favorite-outline'}
-          onPress={favoritePressHandler}
-        />
-      </HeaderButtons>
-    ),
-  }
-}
 export default MealDetails

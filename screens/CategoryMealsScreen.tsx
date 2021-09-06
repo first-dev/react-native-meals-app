@@ -1,33 +1,22 @@
-import React from 'react'
+import { DrawerScreenProps } from '@react-navigation/drawer'
+import React, { FC } from 'react'
 import { View, StyleSheet } from 'react-native'
-import { NavigationStackScreenComponent } from 'react-navigation-stack'
 
-import { CATEGORIES, MEALS } from '../assets/dummy-data'
+import { MEALS } from '../assets/dummy-data'
 import MealsList from '../components/MealsList'
+import { MealsStackParamList } from '../navigation/MealsStackNavigator'
 
-type CategoryMealsScreenParams = { categoryId: string }
+type Props = DrawerScreenProps<MealsStackParamList, 'CategoryMeals'>
 
-const CategoryMealsScreen: NavigationStackScreenComponent<CategoryMealsScreenParams> =
-  ({ navigation }) => {
-    const categoryId = navigation.getParam('categoryId')
-    const meals = MEALS.filter(meal => meal.categoryIds.includes(categoryId))
+const CategoryMealsScreen: FC<Props> = ({ navigation, route }) => {
+  const categoryId = route.params.categoryId
+  const meals = MEALS.filter(meal => meal.categoryIds.includes(categoryId))
 
-    return (
-      <View style={styles.screen}>
-        <MealsList meals={meals} navigation={navigation} />
-      </View>
-    )
-  }
-CategoryMealsScreen.navigationOptions = ({ navigation }) => {
-  const category = CATEGORIES.find(
-    category => category.id === navigation.getParam('categoryId')
+  return (
+    <View style={styles.screen}>
+      <MealsList meals={meals} navigation={navigation} />
+    </View>
   )
-  return {
-    title: category?.title,
-    headerStyle: {
-      backgroundColor: category?.color,
-    },
-  }
 }
 export default CategoryMealsScreen
 const styles = StyleSheet.create({
